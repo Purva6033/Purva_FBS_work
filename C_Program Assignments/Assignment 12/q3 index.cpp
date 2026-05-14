@@ -1,0 +1,12 @@
+#include<stdio.h>
+int main(){
+	char str[5]="fbss";
+	int i,n;
+	printf("enter index");
+	scanf("%d",&n);
+	for(i=n;str[i]!='\0';i++){
+		str[i]=str[i+1];
+	}
+	printf("%s",str);
+	return 0;
+}
