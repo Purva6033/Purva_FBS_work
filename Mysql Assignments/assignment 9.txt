@@ -1,0 +1,334 @@
+create table bank_account(
+account_no int primary key, 
+customer_name varchar(30) , 
+balance decimal(10,2) , 
+account_type varchar(20));
+
+Q1)  delimiter //
+	create procedure Create_Account(
+	in p_account_no int,
+	in p_customer_name varchar(30),
+	in p_opening_balance decimal(10,2),
+	in p_account_type varchar(20))
+	
+begin
+	declare cnt int;
+	select count(*)
+	into cnt
+	from bank_account
+	where account_no = p_account_no ;
+
+	if cnt > 0  then
+	rollback;
+	select 'Account already exists' as Message;
+
+	elseif p_opening_balance < 0 then
+	rollback;
+	select 'Opening balance cannott be negative ' as message;
+	
+	elseif p_account_type not in ('Saving' , 'Current') then
+	rollback;
+	select 'Invalid account type ' as message ;
+
+	else 
+	insert into bank_account 
+	values (
+	p_account_no,
+	p_customer_name;
+	p_opening_balance;
+	p_account_type );
+
+	commit;
+	select 'account created successfully' as message;
+	end if;
+   	end //
+
+	delimiter ;
+
+
+Q2)  delimiter //
+	create procedure Check_Balance(in p_account_no int , out p_current_balance decimal(10,2))
+	begin 
+	declare cnt int;
+	select count(*) 
+	into cnt
+	from bank_account
+	where account_no = p_account_no;
+
+	if cnt = 0 then
+	
+	set p_current_balance = null;
+	select 'Acc not found' as message;
+
+	else
+
+	select balance
+	into p_current_balance
+	from bank_account
+	where account_no = p_account_no;
+
+	select 'Balance fetched successfully' as message;
+	
+	end if;
+	end//
+	delimiter;
+
+call - call Check_Balance(102,@bal);
+	select @bal;
+
+Q3)  delimiter//
+	create procedure deposit_Amount(in p_account_no int , inout p_deposit_amount decimal(10,2))
+	begin 
+	declare cnt int;
+	declare current_balance decimal(10,2);
+
+	select count(*)                                                //if acc exits
+	into cnt
+	from bank_account
+	where account_no = p_account_no ;
+
+	if cnt = 0 then
+
+	rollback;
+	select 'Acc not found' as message;
+
+	elseif p_deposit_amount <= 0 then
+	rollback;
+	select 'invalid deposit amt' as message;
+
+	else 
+
+	select balance                                                 //current bal
+	into current_balance
+	from bank_account 
+	where account_no = p_account_no;
+
+	set current_balance = current_balance + p_deposit_amount;                                    //add deposit amt
+
+	update bank_account                                                                                          //update bal
+	set balance = current_balance
+	where account_no = p_account_no;
+
+	set p_deposit_amount = current balance;                                                 //return new bal
+
+	commit;
+	select 'Amt deposited successfully' as message;
+	
+	end if;
+	end//
+	delimiter;
+	
+call - set @amount = 1000;
+	call Deposit_Amount(101,@amount);
+	select @amount;
+
+
+Q4)  delimiter//
+	create procedure Withdraw_Amount( in p_account_no int , in p_withdraw_amount decimal(10,2))
+	begin
+	
+	declare cnt int;
+	declare current_balance decimal(10,2);
+	
+	select count(*) 			//if ac exists
+	into cnt
+	from bank_account 
+	where account_no = p_account_no;
+
+	if cnt = 0 then
+	rollback;
+	select 'Acc not found' as message;
+
+	elseif p_withdraw_amount <= 0 then
+	
+	rollback;
+	select 'Invalid withdrawal amount' as message;
+
+	else 
+	
+	select balance 
+	into current_balance
+	from bank_account
+	where account_no = p_account_no;
+
+	if current_balance >= p_withdraw_amount
+	
+	update bank_account
+	set balance = balance - p_withdraw_amount 
+	where account_no = p_account_no;
+
+	commit;
+	select "Amt withdraw successfully ' as message;
+
+	else 
+	rollback;
+	select 'Amt withdraw succwssful' as message  ;
+
+	else 
+	rollback;
+	select 'insufficient balance' as message;
+  
+ 	end if;
+	end if;
+	end //
+	delimiter;
+
+Q5) delimiter //
+	create procedure Transfer_Funds( in p_from_account int, in p _to_account int, in p_transfer_amount decimal(10,2))
+	begin
+	declare cnt int;
+	declare sender_balance decimal(10,2);
+
+	select count(*) 
+	into cnt
+	from bank_account
+	where account_no = p_from_account;
+
+	if cnt=0 then
+	rollback;
+	select 'Sender account not found' as message;
+
+	elseif p_transfer_amount <= 0 then
+	rollback;
+	select 'invalid transfer amt' as message
+	
+	else
+	select balance
+	into sender_balance
+	from bank_account
+	where account_no = p_from_account;
+
+	commit;
+	select 'fund transferred successfully' as message;
+	else 
+	rollback;
+	select 'insufficient balance' as message;
+
+	end if;
+	end if;
+	end if;
+	end//
+ 
+	delimiter;
+
+call - call Transfer_Funds(101,102,1000);
+
+Q6) delimiter//
+	create procedure Safe_Balance_Check(in p_account_no int)
+	begin
+	declare v_balance decimal(10,2)
+	declare exit handler for not found 
+	begin 
+	select 'account not found' as message;
+	end;
+
+	select balance
+	into v_balance
+	from bank_account
+	where account_no = p_account_no;
+
+	select v_balance as balance'
+
+	end//
+	delimiter;
+
+	
+Q7) delimiter//
+	create procedure Apply_Penalty(in p_account_no int)
+	begin
+	declare cnt int;
+	declare current_balance decimal(10,2);
+
+	select count(*) 
+	into cnt
+	from bank_account
+	where account_no = p_account_no;
+
+	if cnt=0 then
+	rollback;
+	select 'acc not found' as message;
+	
+	else 
+	select balance
+	into current_balance
+	from bank_account
+	where account_no = p_accpunt_no;
+
+	if current_balance < 1000 then
+	update bank_account
+	set balance = balance - 100
+	where account_no = p_account_no;
+	
+	commit;
+	select 'penalty applies' as message;
+	
+	else 
+	select 'no penalty applied' as message;
+	
+	end if;
+	end if;
+	end if;
+	end// 
+	
+	delimiter//
+
+
+Q8) delimiter //
+	create procedure Close_Account(in p_account_no int)
+	begin
+	declare cnt int;
+	declare  current_balance decimal(10,2);
+
+	select count(*)
+	into cnt
+	from bank_acoount
+	where account_no = p_account_no;
+
+	if cnt=0 then
+	rollback;
+	select 'account not found' as message;
+	
+	else 
+	select balance
+	into current_balance
+	from bank_account
+	where account_no = p_account_no;
+
+	commit;
+	select 'account closed successfully' as message;
+	else
+	rollback;
+	select 'account cannot be closed , bal not zero ' as message;
+	
+	end if;
+	end if;
+	end//
+	delimiter;
+
+call = call Closed_Account(101);
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

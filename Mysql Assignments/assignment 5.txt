@@ -1,0 +1,124 @@
+Q1) select * from books where author_name = 'Loni' and price < 600;
+
+Q2) select * from issue where return_date is null;
+
+Q3) update issue set return_date = '2025-12-31' where return_date is null and lib_issue_id not in (7005,7006);
+
+Q4) select * from issue where datediff(return_date , issue_date) > 30;
+
+Q5) select * from books where price between 500 and 750 and category = 'Database';
+
+Q6) select * from books where category in ('Science',' Database',' Fiction',' Management');
+
+Q7) select * from member order by penalty_amount desc;
+
+Q8) update books set price = 300 , category = 'RDBMS' where book_no = 103;
+
+Q9) select * from books order by category asc, price desc ;
+
+Q10) select * from books where book_name like '%SQL%';
+
+Q11) select lib_issue_id, issue_date , return_date , datediff(return_date , issue_date ) as no_of_days from issue;
+
+Q12) select * from member order by ac_open_date asc;
+
+Q13) select count(*) as Total_bookd_issued from issue where member_id = 1 ;
+
+Q14) select sum(penalty_amount) as total_penalty from member;
+
+Q15) select count(*) as Total_members from member;
+
+Q16) select count(*) as Total_books_issued from issue;
+
+Q17) select avg(fees_paid) as Average_membership_fees from member;
+
+Q18) select category , count(*) as number_of_books from books group by category;
+
+Q19)  select book_no , count(*) aas Times_issued from issue group by book_no order by Timed_issued desc;
+
+Q20) select max(penalty_amount) as maximum_penalty ,min(penalty_amount) as Minimum_penalty, sum(penalty_amount) as Total_penalty , avg(penalty_amount) as Average_penalty  from member;
+
+Q21) select member_id , count(*) as Total_Books from issue group by member_id having count(*) > 2;
+
+Q22)  select member_id, book_no  , count(*) as Times_issued from issue group member_id , book_no ;
+
+Q23) select month(issue_date) as Issue_month , count(*) as Total_issued from issue group by month(issue_date) order by Total_issued desc;
+
+Q24)  select * frm books where book_no not in (select bbook_no from issue);
+
+Q25) seletc distinct member_id from issue where member_id in (select member_id from member);
+
+Q26) select  member_id, count(*) as Total_books  from issue where member_id order by total_books desc limit 1; 
+Q26) select  member_id, count(*) as Total_books  from issue where member_id order by total_books asc limit 1; 
+
+Q27) select * from issue where month(issue_date) in (12,7);
+
+Q28) select b.book_no , b.book_name , i.issue_date from books b join issue i on b.book_no = i.book_no where month(i.issue_date) = 12 and b.category = 'Database ' ;
+
+Q29) select member_id , member_name , max_books_allowed from member order by max_books_allowed desc;
+
+Q30) select b.book_no , b.book_name , i.issue_date , i.return_date from member m join issue i on m.member_id = i.member_id join books b on i.book_no = b.bbok_no where m.member_name = 'Richa Sharma';
+
+Q31) select distinct m.* from member m join issue i on m.member_id = i.member_id join books b on i.book_no = b.book_no where b.category = 'Database' ;
+
+Q32) select * from books b1 where price = (select max(price) from books b2 where b1.category = b2.category);
+
+Q33) select i.* from issue i join member m on i.member_id = m.member_id where i.issue_date < m.ac_open_date;
+
+Q34) select * from member where member_id not in (select member_id from issue);
+
+Q35) select distinct m.member_name from member m join issue i on m.member_id = i.member_id where i.book_no in (select i2.book_no from member m2 join issue i2 on m2.member_id = i2.member_id where m2.member_name = 'Garima Sen');
+
+Q36) select b.book_name , b.price from books b join issue i on b.book_no = i.book_no where i.return_date is null and datediff(cuedate()), i.issue_date) > 30;
+
+Q37) select author_name , count(*) as TotalBooks from books froup by author_name having count(*) > 1;
+
+Q38) select member_id , count(*) as Total from issue group by member_id order by Total desc limit 1;
+Q38) select member_id , count(*) as Total from issue group by member_id order by Total limit 1;
+
+Q39) select * from books order by price desc limit 3;
+
+Q40) select sum(b.price) as Totalprice from books b join issue i on b.book_no = i.book_no where i.return_date is null;
+
+Q41) select book_no , count(*) as Times_issued from issue group by book_no order by Times_issued desc limit 1;
+
+Q42) select count(*) as Total_books from issue i join member m on i.member_id = m.member_id where m.membership_type = 'Lifetime' ; 
+
+Q43) select membership_type , count(*) as Totalmembers from member group by membership_type;
+
+Q44) select * from member order by ac_open_date limit 5;
+
+Q45) select distinct m.member_name , m.membership_type from member m join issue i on m.member_id = i.member_id where month(i.issue_date) = 12;
+
+Q46) select distinct m.* from member m join issue i on m.member_id = i.member_id where i.return_date is null;
+
+Q47) select * from member where ac_open_date = ( select ac_open_date from member where member_name = 'Garima Sen');
+
+Q48) select distinct m.member_name frommember m join issue i on m.member_id = i.member_id join books b on i.book_no = b.book_no where b.author_name = 'Loni' and month(i.issue_date) = 12;
+
+Q49) select b.author_name , count(*) as Totalissued from books b join issue i on b.book_no = i. book_no join member m on i.member_id = m.member_id where m.membership_type = 'Lifetime' group by b.author_name order by Totalissue limit 1;
+
+Q50) select distinct m.member_name from member m join issue i on m.member_id = i.member_id join books b on i.book_no = b.book_no where b.author_name = 'Scott Urman' and b.price > 300 ;
+
+Q51) select m.member_id , m.member_name from member m join issue i on m.membership_type = 'Lifetime' and year(m.ac_open_date) = 2006 group by m.member_id , m.member_name having count(*) = 1;
+
+Q52) update member set penalty_amount = 100 where member_name = 'Garima Sen ' ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

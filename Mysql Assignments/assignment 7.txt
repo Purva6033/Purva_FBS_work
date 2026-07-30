@@ -1,0 +1,40 @@
+set autocommit = 0;
+
+Q1) start transaction;
+      insert into member values (15, 'Bibek Sharma ', 'Pune  ',  ' 2026-07-13 ', ' Annual ', 13000,3,0);
+      commit;
+
+Q2)  start transaction;
+     insert into books values(120,'  Prog',' Helen',550, 'Programming');
+     rollback;
+
+Q3) start transaction;
+	savepoint before_update;
+	update member
+	set penalty_amount = 500 where member_id = 2;
+	rollback to before_update;
+
+Q4) start transaction;
+	insert into values(7010,106,2,CURDATE(),null);
+	update member set max_books_allowed = max_books_allowed -1 where member_id = 2;
+	commit;
+
+Q5) start transaction;
+	update books set price = 600 where book_no = 101;
+	savepoint after_update;
+	delete from issue where lib_issue_id = 7001;
+	rollback to after_update;
+	commit;
+
+Q6) start transaction;
+	update books set price = 400 where book_no = 101;
+	commit;
+	rollback;
+
+Q7) start transaction;
+	update books set price = 700 where book_no = 101;
+	savepoint s1;
+	update books set price = 800 where book_no = 102;
+	rollback to s1;
+	commit;
+

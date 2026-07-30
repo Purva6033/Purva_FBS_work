@@ -1,0 +1,90 @@
+Q1)  delimiter //
+	create function Annual_Salary(p_salary decimal(10,2))
+	returns decimal(10,2)
+	begin
+	return p_salary*12;
+	end//
+	delimiter;
+
+call = select Annual_Salary(50000);
+	
+Q2)  delimiter //
+	create function Calculate_Bonus(p_salary decimal(10,2))
+	returns decimal(10,2)
+	begin
+	if p_salary >= 80000 then
+	return p_salary * 0.20;
+	
+ 	elseif p_salary >= 50000 then
+	return p_salary * 0.10;
+
+	else 
+	return p_salary * 0.05;
+
+	end if;
+	end //
+	delimiter;
+
+call = select Calculate_Bonus(100000)
+
+Q3)  delimiter //
+	create function Salary_Grade(p_salary decimal(10,2))
+	returns char(1)
+	begin
+	if p_salary >= 80000 then
+	return 'A' ;
+	
+	elseif p_salary >= 50000 then
+	return 'B' ;
+
+	else
+	return 'C' ;
+
+	end if;
+	end //
+
+	delimiter;
+
+call= select Salary_Grade(65000);
+
+
+Q4) delimiter //
+	create function Employee_Exists( p_emp_id int )
+	return int
+	begin
+	
+	declare cnt int;
+	
+	select count(*) 
+	into cnt
+	from employee
+	where emp_id = p_emp_id ;
+
+	if cnt > 0 then
+	return 1;
+	else
+	return 0;
+	end if;
+
+	end //
+
+	delimiter;
+
+	call = select Employee_Exists(101);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
